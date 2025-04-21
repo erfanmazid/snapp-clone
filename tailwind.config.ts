@@ -8,7 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {},
+      colors: {
+        primary: "#21aa58",
+        lightBlue: "#f2f5f8",
+      },
       fontFamily: {
         iranSans: "var(--font-iran-sans)",
       },
