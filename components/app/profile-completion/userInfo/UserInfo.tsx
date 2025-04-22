@@ -67,7 +67,7 @@ function UserInfo({
 
       toast.success("اطلاعات شما با موفقیت ثبت شد.");
       if (role === "driver") {
-        router.push("/driver/profile");
+        router.push("/driver/register-car");
       } else if (role === "passenger") {
         router.push("/passenger/profile");
       }
@@ -93,7 +93,7 @@ function UserInfo({
       />
       <div className="flex flex-col gap-2">
         <h2 className="text-lg">نقش خود را انتخاب کنید:</h2>
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-3">
           <Button
             onClick={() => handleRoleSelection("driver")}
             className={`w-[48%] bg-gray-400 hover:bg-primary ${
