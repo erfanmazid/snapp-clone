@@ -30,7 +30,7 @@ function ConfirmEmailPage() {
               setRedirectCountdown((prev) => {
                 if (prev === 1) {
                   clearInterval(interval);
-                  router.push("/dashboard");
+                  router.push("/profile-completion");
                 }
                 return prev - 1;
               });
