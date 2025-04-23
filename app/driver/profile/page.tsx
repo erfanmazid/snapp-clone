@@ -2,13 +2,12 @@
 
 import { useDriverDataById } from "@/hooks/useDriverDataById/useDriverDataById";
 import { useUserById } from "@/hooks/useUserById/useUserById";
-// import { useUserId } from "@/hooks/useUserId/useUserId";
+import { useUserId } from "@/hooks/useUserId/useUserId";
 import { Avatar, Skeleton } from "@nextui-org/react";
 import { Car, Phone, Mail, User, Hash, Palette } from "lucide-react";
 
 function DriverProfilePage() {
-  // const userId = useUserId();
-  const userId = "8922523a-c6b2-4372-8487-492317e303f2";
+  const userId = useUserId();
 
   const { driver, loading: driverLoading } = useDriverDataById(userId);
   const { user, loading: userLoading } = useUserById(userId);
