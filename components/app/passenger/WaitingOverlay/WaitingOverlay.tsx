@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import toast from "react-hot-toast";
 
 const supabase = createClientComponentClient();
 
@@ -17,11 +18,12 @@ export default function WaitingOverlay({ requestId }: { requestId: string }) {
           event: "UPDATE",
           schema: "public",
           table: "ride_requests",
-          filter: `id=eq.${requestId}`,
         },
         (payload) => {
-          const newStatus = payload.new.status;
-          if (newStatus === "accepted") {
+          const { id, status } = payload.new;
+          console.log("🟢 Real-time update received:", { id, status });
+
+          if (id === requestId && status === "matched") {
             setAccepted(true);
           }
         }
@@ -33,7 +35,10 @@ export default function WaitingOverlay({ requestId }: { requestId: string }) {
     };
   }, [requestId]);
 
-  if (accepted) return null;
+  if (accepted) {
+    toast.success("راننده پذیرفته شد");
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[1200] flex flex-col items-center justify-center text-white space-y-4">

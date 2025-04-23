@@ -1,10 +1,12 @@
 "use client";
 
+import Button from "@/components/ui/Button";
 import { useDriverDataById } from "@/hooks/useDriverDataById/useDriverDataById";
 import { useUserById } from "@/hooks/useUserById/useUserById";
 import { useUserId } from "@/hooks/useUserId/useUserId";
 import { Avatar, Skeleton } from "@nextui-org/react";
 import { Car, Phone, Mail, User, Hash, Palette } from "lucide-react";
+import Link from "next/link";
 
 function DriverProfilePage() {
   const userId = useUserId();
@@ -43,7 +45,7 @@ function DriverProfilePage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto my-8 px-4">
+    <div className="max-w-3xl mx-auto my-8 px-4 pb-20">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
         <div className="h-32 w-full relative bg-primary">
           <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
@@ -141,6 +143,13 @@ const ProfileCard = ({
           </span>
         </div>
       ))}
+    </div>
+    <div className="fixed bottom-0 left-0 right-0 bg-white p-5 border-t rounded-t-2xl shadow-lg z-[1000] animate-slideUp">
+      <Link href={"/driver/accept"}>
+        <Button className="w-full bg-primary text-white py-3 text-lg rounded-xl hover:bg-teal-700">
+          مشاهده لیست سفرها{" "}
+        </Button>
+      </Link>
     </div>
   </div>
 );

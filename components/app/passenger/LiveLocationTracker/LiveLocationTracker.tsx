@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 const userIcon = new L.Icon({
   iconUrl: "/user-location.png", // آیکن دلخواهت رو بذار اینجا
-  iconSize: [32, 32],
+  iconSize: [48, 48],
   iconAnchor: [16, 32],
 });
 

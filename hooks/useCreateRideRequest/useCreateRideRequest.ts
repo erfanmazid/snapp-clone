@@ -25,6 +25,8 @@ export default function useCreateRideRequest() {
           to_lng: data.to_lng,
           suggested_price: data.suggested_price,
           status: data.status || "waiting",
+          passenger_name: data.passenger_name,
+          duration: data.duration,
         },
       ])
       .select()

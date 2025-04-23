@@ -12,6 +12,7 @@ import useCreateRideRequest from "@/hooks/useCreateRideRequest/useCreateRideRequ
 import toast from "react-hot-toast";
 import WaitingOverlay from "@/components/app/passenger/WaitingOverlay/WaitingOverlay";
 import { useUserId } from "@/hooks/useUserId/useUserId";
+import { useUserById } from "@/hooks/useUserById/useUserById";
 
 const defaultPosition: LatLngExpression = [35.6892, 51.389]; // Tehran
 
@@ -41,17 +42,17 @@ const MapClickHandler = ({
 };
 
 const PassengerRequest = () => {
+  const userId = useUserId();
   const [from, setFrom] = useState<LatLngExpression | null>(null);
   const [to, setTo] = useState<LatLngExpression | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
   const [price, setPrice] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string | null>(null);
+  const { user } = useUserById(userId);
 
   const { createRideRequest, loading: createRideRequestLoading } =
     useCreateRideRequest();
-
-  const userId = useUserId();
 
   const handleMapClick = (lat: number, lng: number) => {
     if (!from) {
@@ -95,6 +96,8 @@ const PassengerRequest = () => {
         to_lat: (to as [number, number])[0],
         to_lng: (to as [number, number])[1],
         suggested_price: price,
+        passenger_name: user?.full_name ?? "",
+        duration,
       };
       try {
         const res = await createRideRequest(data);
