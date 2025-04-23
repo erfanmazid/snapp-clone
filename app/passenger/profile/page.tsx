@@ -5,10 +5,11 @@ import { Avatar, Skeleton } from "@nextui-org/react";
 import { User, Phone, Mail, CreditCard, MapPin } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
-import { useUserId } from "@/hooks/useUserId/useUserId";
+// import { useUserId } from "@/hooks/useUserId/useUserId";
 
 function PassengerProfilePage() {
-  const userId = useUserId();
+  // const userId = useUserId();
+  const userId = "8922523a-c6b2-4372-8487-492317e303f2";
 
   const { user, loading: userLoading } = useUserById(userId);
 

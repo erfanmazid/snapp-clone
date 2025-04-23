@@ -10,7 +10,7 @@ import Link from "next/link";
 import useCreateRideRequest from "@/hooks/useCreateRideRequest/useCreateRideRequest";
 import toast from "react-hot-toast";
 import WaitingOverlay from "@/components/app/passenger/WaitingOverlay/WaitingOverlay";
-import { useUserId } from "@/hooks/useUserId/useUserId";
+// import { useUserId } from "@/hooks/useUserId/useUserId";
 
 const defaultPosition: LatLngExpression = [35.6892, 51.389]; // Tehran
 
@@ -50,7 +50,8 @@ const PassengerRequest = () => {
   const { createRideRequest, loading: createRideRequestLoading } =
     useCreateRideRequest();
 
-  const userId = useUserId();
+  // const userId = useUserId();
+  const userId = "8922523a-c6b2-4372-8487-492317e303f2";
 
   const handleMapClick = (lat: number, lng: number) => {
     if (!from) {
