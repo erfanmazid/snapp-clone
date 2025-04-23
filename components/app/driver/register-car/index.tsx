@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { useUserId } from "@/hooks/useUserId/useUserId";
 
 const formSchema = z.object({
   car_model: z.string().min(2, "مدل ماشین را وارد کنید."),
@@ -19,6 +20,8 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 function RegisterCarForm() {
+  const userId = useUserId();
+
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -36,15 +39,6 @@ function RegisterCarForm() {
   });
 
   const onSubmit = async (formData: FormData) => {
-    const token = localStorage.getItem("sb-lwzyvmumnplvtbptahti-auth-token");
-    if (!token) {
-      toast.error("کاربر شناسایی نشد.");
-      return;
-    }
-
-    const user = JSON.parse(token);
-    const userId = user?.user?.id;
-
     if (!userId) {
       toast.error("شناسه کاربر موجود نیست.");
       return;

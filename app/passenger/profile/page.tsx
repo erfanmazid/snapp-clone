@@ -1,22 +1,14 @@
 "use client";
 
 import { useUserById } from "@/hooks/useUserById/useUserById";
-import { useEffect, useState } from "react";
 import { Avatar, Skeleton } from "@nextui-org/react";
 import { User, Phone, Mail, CreditCard, MapPin } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
+import { useUserId } from "@/hooks/useUserId/useUserId";
 
 function PassengerProfilePage() {
-  const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("sb-lwzyvmumnplvtbptahti-auth-token");
-    if (token) {
-      const userData = JSON.parse(token);
-      setUserId(userData?.user?.id);
-    }
-  }, []);
+  const userId = useUserId();
 
   const { user, loading: userLoading } = useUserById(userId);
 

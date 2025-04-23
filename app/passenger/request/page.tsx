@@ -10,6 +10,7 @@ import Link from "next/link";
 import useCreateRideRequest from "@/hooks/useCreateRideRequest/useCreateRideRequest";
 import toast from "react-hot-toast";
 import WaitingOverlay from "@/components/app/passenger/WaitingOverlay/WaitingOverlay";
+import { useUserId } from "@/hooks/useUserId/useUserId";
 
 const defaultPosition: LatLngExpression = [35.6892, 51.389]; // Tehran
 
@@ -49,8 +50,7 @@ const PassengerRequest = () => {
   const { createRideRequest, loading: createRideRequestLoading } =
     useCreateRideRequest();
 
-  const user = localStorage.getItem("sb-lwzyvmumnplvtbptahti-auth-token");
-  const userId = user ? JSON.parse(user)?.user?.id : null;
+  const userId = useUserId();
 
   const handleMapClick = (lat: number, lng: number) => {
     if (!from) {
@@ -88,7 +88,7 @@ const PassengerRequest = () => {
   const handleRequest = async () => {
     if (from && to && duration && price) {
       const data = {
-        user_id: userId,
+        user_id: userId ?? "",
         from_lat: (from as [number, number])[0],
         from_lng: (from as [number, number])[1],
         to_lat: (to as [number, number])[0],
@@ -129,7 +129,7 @@ const PassengerRequest = () => {
           setDuration(null);
           setPrice(null);
         }}
-        className="absolute top-5 left-5 bg-white !text-primary py-2 px-4 rounded-full shadow-md hover:bg-gray-100 z-[1100] transition-all w-40"
+        className="absolute top-5 left-5 bg-white !text-primary py-2 px-4 rounded-full shadow-md hover:bg-gray-100 z-[1100] transition-all max-w-40"
       >
         ↺ انتخاب مجدد
       </Button>

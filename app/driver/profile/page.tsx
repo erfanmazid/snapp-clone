@@ -2,20 +2,12 @@
 
 import { useDriverDataById } from "@/hooks/useDriverDataById/useDriverDataById";
 import { useUserById } from "@/hooks/useUserById/useUserById";
-import { useEffect, useState } from "react";
+import { useUserId } from "@/hooks/useUserId/useUserId";
 import { Avatar, Skeleton } from "@nextui-org/react";
 import { Car, Phone, Mail, User, Hash, Palette } from "lucide-react";
 
 function DriverProfilePage() {
-  const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("sb-lwzyvmumnplvtbptahti-auth-token");
-    if (token) {
-      const userData = JSON.parse(token);
-      setUserId(userData?.user?.id);
-    }
-  }, []);
+  const userId = useUserId();
 
   const { driver, loading: driverLoading } = useDriverDataById(userId);
   const { user, loading: userLoading } = useUserById(userId);
@@ -53,7 +45,6 @@ function DriverProfilePage() {
   return (
     <div className="max-w-3xl mx-auto my-8 px-4">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-        {/* هدر با رنگ پرایمری */}
         <div className="h-32 w-full relative bg-primary">
           <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
             <Avatar
@@ -66,7 +57,6 @@ function DriverProfilePage() {
           </div>
         </div>
 
-        {/* محتوای پروفایل */}
         <div className="pt-20 pb-8 px-6">
           <h2 className="text-3xl font-bold text-center mb-2 text-gray-800">
             {user.full_name}
@@ -74,7 +64,6 @@ function DriverProfilePage() {
           <p className="text-center text-gray-500 mb-8">راننده</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* اطلاعات شخصی */}
             <ProfileCard
               title="اطلاعات شخصی"
               icon={<User className="w-5 h-5 text-primary" />}
@@ -94,7 +83,6 @@ function DriverProfilePage() {
               color={"#21aa58"}
             />
 
-            {/* اطلاعات خودرو */}
             <ProfileCard
               title="اطلاعات خودرو"
               icon={<Car className="w-5 h-5 text-primary" />}

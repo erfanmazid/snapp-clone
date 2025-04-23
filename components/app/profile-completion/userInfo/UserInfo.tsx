@@ -2,10 +2,11 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/input/Input";
+import { UserDate } from "@/hooks/useUserById/type";
 import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -29,9 +30,20 @@ function UserInfo({
   role: string | null;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<UserDate | null>(null); // وضعیت برای ذخیره‌سازی کاربر
   const router = useRouter();
-  const data = localStorage.getItem("sb-lwzyvmumnplvtbptahti-auth-token");
-  const user = JSON.parse(data!);
+
+  useEffect(() => {
+    // بررسی اینکه آیا در محیط مرورگر هستیم یا نه
+    if (typeof window !== "undefined") {
+      const data = localStorage.getItem("sb-lwzyvmumnplvtbptahti-auth-token");
+      if (data) {
+        const userData = JSON.parse(data);
+        setUser(userData.user); // تنظیم اطلاعات کاربر
+      }
+    }
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -49,14 +61,21 @@ function UserInfo({
       toast.error("لطفاً نقش خود را انتخاب کنید.");
       return;
     }
+
+    if (!user) {
+      toast.error("خطا در دریافت اطلاعات کاربر.");
+      return;
+    }
+
     setLoading(true);
     const newUser = {
       full_name: data.full_name,
       phone: data.phone,
-      id: user.user.id,
-      email: user.user.email,
+      id: user.id,
+      email: user.email,
       role,
     };
+
     try {
       const { error } = await supabase.from("users").insert([newUser]);
 
@@ -76,6 +95,10 @@ function UserInfo({
     }
     setLoading(false);
   };
+
+  if (!user) {
+    return <div>در حال بارگذاری اطلاعات...</div>;
+  }
 
   return (
     <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
@@ -113,7 +136,7 @@ function UserInfo({
         </div>
       </div>
 
-      <Button type="submit" loading={loading}>
+      <Button type="submit" loading={loading} className="!bg-primary">
         تکمیل پروفایل
       </Button>
     </form>
