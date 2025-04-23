@@ -46,12 +46,8 @@ const PassengerRequest = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string | null>(null);
 
-  const {
-    createRideRequest,
-    loading: createRideRequestLoading,
-    success,
-    error,
-  } = useCreateRideRequest();
+  const { createRideRequest, loading: createRideRequestLoading } =
+    useCreateRideRequest();
 
   const user = localStorage.getItem("sb-lwzyvmumnplvtbptahti-auth-token");
   const userId = user ? JSON.parse(user)?.user?.id : null;
