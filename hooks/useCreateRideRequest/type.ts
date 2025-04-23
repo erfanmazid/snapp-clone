@@ -1,6 +1,5 @@
 export type RideRequestData = {
   user_id: string;
-  passenger_id: string;
   from_lat: number;
   from_lng: number;
   to_lat: number;

@@ -15,7 +15,6 @@ export default function useCreateRideRequest() {
     const { error: insertError } = await supabase.from("ride_requests").insert([
       {
         user_id: data.user_id,
-        passenger_id: data.passenger_id,
         from_lat: data.from_lat,
         from_lng: data.from_lng,
         to_lat: data.to_lat,
