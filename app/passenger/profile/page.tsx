@@ -4,6 +4,8 @@ import { useUserById } from "@/hooks/useUserById/useUserById";
 import { useEffect, useState } from "react";
 import { Avatar, Skeleton } from "@nextui-org/react";
 import { User, Phone, Mail, CreditCard, MapPin } from "lucide-react";
+import Button from "@/components/ui/Button";
+import Link from "next/link";
 
 function PassengerProfilePage() {
   const [userId, setUserId] = useState<string | null>(null);
@@ -49,7 +51,7 @@ function PassengerProfilePage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto my-8 px-4">
+    <div className="max-w-3xl mx-auto my-8 px-4 pb-20">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
         {/* هدر با رنگ پرایمری */}
         <div className="h-32 w-full relative bg-primary">
@@ -150,6 +152,13 @@ const ProfileCard = ({
           </span>
         </div>
       ))}
+    </div>
+    <div className="fixed bottom-0 left-0 right-0 bg-white p-5 border-t rounded-t-2xl shadow-lg z-[1000] animate-slideUp">
+      <Link href={"/passenger/request"}>
+        <Button className="w-full bg-primary text-white py-3 text-lg rounded-xl hover:bg-teal-700">
+          ثبت درخواست سفر
+        </Button>
+      </Link>
     </div>
   </div>
 );
