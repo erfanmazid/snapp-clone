@@ -2,11 +2,11 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/input/Input";
-import { UserDate } from "@/hooks/useUserById/type";
+import { useUserFromLocalStorage } from "@/hooks/useUserFromLocalStorage/useUserFromLocalStorage";
 import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -30,19 +30,8 @@ function UserInfo({
   role: string | null;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [user, setUser] = useState<UserDate | null>(null); // وضعیت برای ذخیره‌سازی کاربر
+  const user = useUserFromLocalStorage(); // هوک جدید
   const router = useRouter();
-
-  useEffect(() => {
-    // بررسی اینکه آیا در محیط مرورگر هستیم یا نه
-    if (typeof window !== "undefined") {
-      const data = localStorage.getItem("sb-lwzyvmumnplvtbptahti-auth-token");
-      if (data) {
-        const userData = JSON.parse(data);
-        setUser(userData.user); // تنظیم اطلاعات کاربر
-      }
-    }
-  }, []);
 
   const {
     register,
