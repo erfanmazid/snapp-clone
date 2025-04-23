@@ -6,8 +6,6 @@ export function useUserFromLocalStorage(): UserDate | null {
   const [user, setUser] = useState<UserDate | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
     try {
       const token = localStorage.getItem("sb-lwzyvmumnplvtbptahti-auth-token");
       if (token) {

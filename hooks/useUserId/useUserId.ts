@@ -6,8 +6,6 @@ export function useUserId(): string | null {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
     try {
       const token = localStorage.getItem("sb-lwzyvmumnplvtbptahti-auth-token");
       if (token) {
