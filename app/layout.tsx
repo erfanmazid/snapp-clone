@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 const iranSans = localFont({
   src: "./fonts/IRANSans.woff2",
@@ -21,7 +22,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl">
-      <body className={`${iranSans.variable} font-iranSans`}>{children}</body>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        />
+      </head>
+      <body className={`${iranSans.variable} font-iranSans`}>
+        {children}
+        {<Toaster position="top-center" reverseOrder={false} />}
+      </body>
     </html>
   );
 }

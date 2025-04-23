@@ -1,3 +1,11 @@
+import MainHeader from "@/components/app/main/header";
+import MainMain from "@/components/app/main/main";
+
 export default function Home() {
-  return <div className="">سلام</div>;
+  return (
+    <main className="min-h-screen">
+      <MainHeader />
+      <MainMain />
+    </main>
+  );
 }
