@@ -1,4 +1,5 @@
-// hooks/useUserById.ts
+"use client";
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { UserDate } from "./type";
