@@ -1,7 +1,7 @@
 "use client";
 export const dynamic = "force-dynamic";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { LatLngExpression } from "leaflet";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
@@ -10,7 +10,16 @@ import toast from "react-hot-toast";
 import WaitingOverlay from "@/components/app/passenger/WaitingOverlay/WaitingOverlay";
 import { useUserId } from "@/hooks/useUserId/useUserId";
 import { useUserById } from "@/hooks/useUserById/useUserById";
-import MapComponent from "./MapComponent";
+import { default as dynamicImport } from "next/dynamic";
+
+const MapComponent = dynamicImport(() => import("./MapComponent"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+      <div className="text-gray-500">در حال بارگذاری نقشه...</div>
+    </div>
+  ),
+});
 
 const PassengerRequest = () => {
   const userId = useUserId();
@@ -20,12 +29,7 @@ const PassengerRequest = () => {
   const [price, setPrice] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false);
   const { user } = useUserById(userId);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const { createRideRequest, loading: createRideRequestLoading } =
     useCreateRideRequest();
@@ -93,14 +97,6 @@ const PassengerRequest = () => {
     }
   };
 
-  if (!isClient) {
-    return (
-      <div className="w-full h-full flex items-center justify-center bg-gray-100">
-        <div className="text-gray-500">در حال بارگذاری نقشه...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="relative w-screen h-screen">
       <Link href="/passenger/profile">
@@ -122,11 +118,9 @@ const PassengerRequest = () => {
         ↺ انتخاب مجدد
       </Button>
 
-      {isClient && (
-        <div className="w-full h-full">
-          <MapComponent from={from} to={to} onMapClick={handleMapClick} />
-        </div>
-      )}
+      <div className="w-full h-full">
+        <MapComponent from={from} to={to} onMapClick={handleMapClick} />
+      </div>
 
       {/* دکمه محاسبه قیمت */}
       {from && to && !duration && (
