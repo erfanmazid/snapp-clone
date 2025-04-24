@@ -56,8 +56,9 @@ const PassengerRequest = () => {
         const data = await res.json();
         if (data.routes && data.routes.length > 0) {
           const durationInSeconds = data.routes[0].duration;
-          setDuration(durationInSeconds / 60); // minutes
-          setPrice(Math.ceil((durationInSeconds / 60) * 3000));
+          const durationInMinutes = Math.ceil(durationInSeconds / 60); // رند به بالا
+          setDuration(durationInMinutes);
+          setPrice(Math.ceil(durationInMinutes * 3000)); // رند به بالا
         }
       } catch (error) {
         console.error("Error fetching route data:", error);

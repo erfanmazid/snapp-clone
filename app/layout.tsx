@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   title: "درخواست انلاین ماشین |‌اسنپ",
   description:
     "اسنپ یک سامانه سفر انلاین است که به کاربران اجاره ماشین خود را از طریق اپلیکیشن خود را از طریق اپلیکیشن اسنپ انجام میدهد.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -28,6 +33,8 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
       </head>
       <body className={`${iranSans.variable} font-iranSans`}>
         {children}

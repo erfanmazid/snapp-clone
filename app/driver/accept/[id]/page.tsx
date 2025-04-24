@@ -76,18 +76,22 @@ export default function DriverRequestPage() {
         </p>
         <p>📍 مبدا: {fromAddress}</p>
         <p>📍 مقصد: {toAddress}</p>
-        <p>⏱ مدت زمان: {request.duration} دقیقه</p>
-        <p>💰 قیمت: {request.suggested_price?.toLocaleString("fa")} تومان</p>
+        <p>⏱ مدت زمان: {Math.ceil(request.duration)} دقیقه</p>
+        <p>
+          💰 قیمت: {Math.ceil(request.suggested_price)?.toLocaleString("fa")}{" "}
+          تومان
+        </p>
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white p-5 border-t rounded-t-2xl shadow-lg z-[1000] animate-slideUp">
         <p className="text-lg mb-2">
-          ⏱ مدت سفر: <span className="font-bold">{request.duration} دقیقه</span>
+          ⏱ مدت سفر:{" "}
+          <span className="font-bold">{Math.ceil(request.duration)} دقیقه</span>
         </p>
         <p className="text-lg mb-4">
           💰 قیمت :{" "}
           <span className="font-bold text-green-600">
-            {request.suggested_price?.toLocaleString("fa")} تومان
+            {Math.ceil(request.suggested_price)?.toLocaleString("fa")} تومان
           </span>
         </p>
         <div className="flex gap-3">

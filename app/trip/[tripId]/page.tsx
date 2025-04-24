@@ -271,7 +271,7 @@ const TripMap = () => {
             <p className="text-lg mb-2 text-center">
               💰 مبلغ قابل پرداخت:{" "}
               <span className="font-bold text-green-600">
-                {ride.price?.toLocaleString("fa")} تومان
+                {Math.ceil(ride.price)?.toLocaleString("fa")} تومان
               </span>
             </p>
             <p className="text-center text-red-700 text-lg font-medium border border-red-700 rounded-xl p-2 bg-red-50">
