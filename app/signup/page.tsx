@@ -34,7 +34,7 @@ function SignupPage() {
     const { error, data: user } = await signUp(
       data.email,
       data.password,
-      "http://localhost:3000/auth/confirm"
+      "https://snapp-clone-six.vercel.app/auth/confirm"
     );
     if (!error) {
       console.log(user);
