@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useRideRequest } from "@/hooks/useRideRequest/useRideRequest";
 import { useReverseGeocode } from "@/hooks/useReverseGeocode/useReverseGeocode";
 import { useEffect, useState } from "react";
@@ -18,7 +18,9 @@ export default function DriverRequestPage() {
     loading: reqLoading,
     error,
     success,
+    rideId,
   } = useAcceptRideRequest();
+  const router = useRouter();
 
   const fromAddressResult = useReverseGeocode(
     request?.from_lat || 0,
@@ -28,20 +30,24 @@ export default function DriverRequestPage() {
     request?.to_lat || 0,
     request?.to_lng || 0
   );
+
   useEffect(() => {
-    if (fromAddressResult) {
-      setFromAddress(fromAddressResult);
-    }
-    if (toAddressResult) {
-      setToAddress(toAddressResult);
-    }
+    if (fromAddressResult) setFromAddress(fromAddressResult);
+    if (toAddressResult) setToAddress(toAddressResult);
   }, [fromAddressResult, toAddressResult]);
 
   const handleAccept = async () => {
     if (request) {
-      await acceptRide(request.id);
+      const rideId = await acceptRide(request);
+      if (rideId) {
+        toast.success("درخواست با موفقیت قبول شد.");
+        setTimeout(() => {
+          router.push(`/trip/${rideId}`);
+        }, 1500);
+      }
     }
   };
+
   useEffect(() => {
     if (error) {
       alert(error);
@@ -51,8 +57,11 @@ export default function DriverRequestPage() {
   useEffect(() => {
     if (success) {
       toast.success("درخواست با موفقیت قبول شد.");
+      setTimeout(() => {
+        router.push(`/trip/${rideId}`);
+      }, 1500); // کمی تأخیر برای نمایش Toast
     }
-  }, [success]);
+  }, [success, router, rideId]);
 
   if (loading) return <p className="p-4">در حال بارگذاری...</p>;
   if (!request) return <p className="p-4 text-red-500">درخواستی یافت نشد.</p>;

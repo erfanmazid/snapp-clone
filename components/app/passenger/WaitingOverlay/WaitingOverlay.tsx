@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import toast from "react-hot-toast";
-
+import { useRouter } from "next/navigation";
+import { useUserId } from "@/hooks/useUserId/useUserId";
 const supabase = createClientComponentClient();
 
 export default function WaitingOverlay({ requestId }: { requestId: string }) {
   const [accepted, setAccepted] = useState(false);
+  const userId = useUserId();
+  const router = useRouter();
 
   useEffect(() => {
     const channel = supabase
@@ -19,12 +22,29 @@ export default function WaitingOverlay({ requestId }: { requestId: string }) {
           schema: "public",
           table: "ride_requests",
         },
-        (payload) => {
+        async (payload) => {
           const { id, status } = payload.new;
-          console.log("🟢 Real-time update received:", { id, status });
 
           if (id === requestId && status === "matched") {
             setAccepted(true);
+            try {
+              // جستجو برای پیدا کردن سفر مرتبط با این requestId از جدول rides
+              const { data, error } = await supabase
+                .from("ride_requests")
+                .select("ride_id")
+                .eq("id", requestId)
+                .single();
+              if (data?.ride_id) {
+                router.push(`/trip/${data.ride_id}`);
+              }
+
+              if (error) {
+                toast.error("خطا در پیدا کردن سفر");
+              }
+            } catch (error) {
+              console.error("Error fetching ride:", error);
+              toast.error("خطا در پیدا کردن سفر");
+            }
           }
         }
       )
@@ -33,7 +53,7 @@ export default function WaitingOverlay({ requestId }: { requestId: string }) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [requestId]);
+  }, [requestId, router, userId]);
 
   if (accepted) {
     toast.success("راننده پذیرفته شد");
