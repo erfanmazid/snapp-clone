@@ -41,9 +41,7 @@ export default function DriverRequestPage() {
       const rideId = await acceptRide(request);
       if (rideId) {
         toast.success("درخواست با موفقیت قبول شد.");
-        setTimeout(() => {
-          router.push(`/trip/${rideId}`);
-        }, 1500);
+        router.push(`/trip/${rideId}`);
       }
     }
   };

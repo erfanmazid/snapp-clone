@@ -1,11 +1,8 @@
 "use client";
 export const dynamic = "force-dynamic";
 
-import { useState } from "react";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L, { LatLngExpression } from "leaflet";
-import LiveLocationTracker from "@/components/app/passenger/LiveLocationTracker/LiveLocationTracker";
+import { useState, useEffect } from "react";
+import type { LatLngExpression } from "leaflet";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
 import useCreateRideRequest from "@/hooks/useCreateRideRequest/useCreateRideRequest";
@@ -13,33 +10,7 @@ import toast from "react-hot-toast";
 import WaitingOverlay from "@/components/app/passenger/WaitingOverlay/WaitingOverlay";
 import { useUserId } from "@/hooks/useUserId/useUserId";
 import { useUserById } from "@/hooks/useUserById/useUserById";
-
-const defaultPosition: LatLngExpression = [35.6892, 51.389]; // Tehran
-
-const fromIcon = new L.Icon({
-  iconUrl: "/from.png",
-  iconSize: [48, 48],
-  iconAnchor: [15, 40],
-});
-
-const toIcon = new L.Icon({
-  iconUrl: "/to.png",
-  iconSize: [48, 48],
-  iconAnchor: [15, 40],
-});
-
-const MapClickHandler = ({
-  onClick,
-}: {
-  onClick: (lat: number, lng: number) => void;
-}) => {
-  useMapEvents({
-    click(e) {
-      onClick(e.latlng.lat, e.latlng.lng);
-    },
-  });
-  return null;
-};
+import MapComponent from "./MapComponent";
 
 const PassengerRequest = () => {
   const userId = useUserId();
@@ -49,7 +20,12 @@ const PassengerRequest = () => {
   const [price, setPrice] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
   const { user } = useUserById(userId);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const { createRideRequest, loading: createRideRequestLoading } =
     useCreateRideRequest();
@@ -117,6 +93,14 @@ const PassengerRequest = () => {
     }
   };
 
+  if (!isClient) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+        <div className="text-gray-500">در حال بارگذاری نقشه...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-screen h-screen">
       <Link href="/passenger/profile">
@@ -137,18 +121,12 @@ const PassengerRequest = () => {
       >
         ↺ انتخاب مجدد
       </Button>
-      <MapContainer
-        center={defaultPosition}
-        zoom={13}
-        className="w-full h-full"
-        zoomControl={false}
-      >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <MapClickHandler onClick={handleMapClick} />
-        <LiveLocationTracker />
-        {from && <Marker position={from} icon={fromIcon} />}
-        {to && <Marker position={to} icon={toIcon} />}
-      </MapContainer>
+
+      {isClient && (
+        <div className="w-full h-full">
+          <MapComponent from={from} to={to} onMapClick={handleMapClick} />
+        </div>
+      )}
 
       {/* دکمه محاسبه قیمت */}
       {from && to && !duration && (
