@@ -11,8 +11,6 @@
 ### ویژگی‌ها
 
 - 🚗 درخواست خودرو
-- 🍔 سفارش غذا
-- 🛒 خرید سوپرمارکتی
 - 📱 رابط کاربری واکنش‌گرا
 - 🎨 طراحی مدرن و زیبا
 
@@ -56,8 +54,6 @@ This project is a clone of the Snapp application built using modern web technolo
 ### Features
 
 - 🚗 Ride-hailing
-- 🍔 Food delivery
-- 🛒 Grocery shopping
 - 📱 Responsive UI
 - 🎨 Modern and beautiful design
 
