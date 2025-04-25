@@ -6,11 +6,31 @@ import { User, Phone, Mail, CreditCard, MapPin } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { useUserId } from "@/hooks/useUserId/useUserId";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+import toast from "react-hot-toast";
 
 function PassengerProfilePage() {
   const userId = useUserId();
+  const router = useRouter();
 
   const { user, loading: userLoading } = useUserById(userId);
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      toast.success("خروج موفقیت‌آمیز بود");
+      router.push("/");
+    } catch (error) {
+      toast.error(
+        `خطا در خروج از حساب کاربری: ${
+          error instanceof Error ? error.message : "خطای ناشناخته"
+        }`
+      );
+    }
+  };
 
   if (userLoading) {
     return (
@@ -105,7 +125,23 @@ function PassengerProfilePage() {
               color={"#21aa58"}
             />
           </div>
+
+          <div className="mt-8">
+            <Button
+              onClick={handleLogout}
+              className="w-full bg-red-500 text-white py-3 text-lg rounded-xl hover:bg-red-600"
+            >
+              خروج از حساب کاربری
+            </Button>
+          </div>
         </div>
+      </div>
+      <div className="fixed bottom-0 left-0 right-0 bg-white p-5 border-t rounded-t-2xl shadow-lg z-[1000] animate-slideUp">
+        <Link href={"/passenger/request"}>
+          <Button className="w-full bg-primary text-white py-3 text-lg rounded-xl hover:bg-teal-700">
+            ثبت درخواست سفر
+          </Button>
+        </Link>
       </div>
     </div>
   );
@@ -144,13 +180,6 @@ const ProfileCard = ({
           </span>
         </div>
       ))}
-    </div>
-    <div className="fixed bottom-0 left-0 right-0 bg-white p-5 border-t rounded-t-2xl shadow-lg z-[1000] animate-slideUp">
-      <Link href={"/passenger/request"}>
-        <Button className="w-full bg-primary text-white py-3 text-lg rounded-xl hover:bg-teal-700">
-          ثبت درخواست سفر
-        </Button>
-      </Link>
     </div>
   </div>
 );
