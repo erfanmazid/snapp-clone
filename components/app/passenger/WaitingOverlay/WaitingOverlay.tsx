@@ -35,6 +35,23 @@ export default function WaitingOverlay({ requestId }: { requestId: string }) {
                 .eq("id", requestId)
                 .single();
               if (data?.ride_id) {
+                const { error: passengerUpdateError } = await supabase.rpc(
+                  "update_user_ride_status",
+                  {
+                    user_id: userId,
+                    in_ride: true,
+                    ride_id: data.ride_id,
+                  }
+                );
+
+                if (passengerUpdateError) {
+                  console.error(
+                    "❌ Error updating passenger:",
+                    passengerUpdateError
+                  );
+                  throw passengerUpdateError;
+                }
+
                 router.push(`/trip/${data.ride_id}`);
               }
 

@@ -137,11 +137,19 @@ function PassengerProfilePage() {
         </div>
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-white p-5 border-t rounded-t-2xl shadow-lg z-[1000] animate-slideUp">
-        <Link href={"/passenger/request"}>
-          <Button className="w-full bg-primary text-white py-3 text-lg rounded-xl hover:bg-teal-700">
-            ثبت درخواست سفر
-          </Button>
-        </Link>
+        {user.in_ride && user.ride_id ? (
+          <Link href={`/trip/${user.ride_id}`}>
+            <Button className="w-full bg-primary text-white py-3 text-lg rounded-xl hover:bg-teal-700">
+              ادامه سفر
+            </Button>
+          </Link>
+        ) : (
+          <Link href={"/passenger/request"}>
+            <Button className="w-full bg-primary text-white py-3 text-lg rounded-xl hover:bg-teal-700">
+              ثبت درخواست سفر
+            </Button>
+          </Link>
+        )}
       </div>
     </div>
   );

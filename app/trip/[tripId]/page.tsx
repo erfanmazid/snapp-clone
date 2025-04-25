@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import { useUserId } from "@/hooks/useUserId/useUserId";
 import { useRide } from "@/hooks/useRide/useRide";
 import { supabase } from "@/lib/supabaseClient";
-import Link from "next/link";
+import { useEndRide } from "@/hooks/useEndRide/useEndRide";
 
 // آیکون‌ها
 const driverIcon = new L.Icon({
@@ -45,6 +45,7 @@ const TripMap = () => {
   const { ride, loading } = useRide(rideId);
   const userId = useUserId();
   const router = useRouter();
+  const { endRide, loading: endRideLoading } = useEndRide();
 
   const isDriver = userId === ride?.driver_id;
   const isPassenger = userId === ride?.passenger_id;
@@ -159,15 +160,63 @@ const TripMap = () => {
   };
 
   const handleComplete = async () => {
-    const { error } = await supabase
-      .from("rides")
-      .update({ status: "completed" })
-      .eq("id", rideId);
-    if (error) {
-      toast.error("خطا در تکمیل سفر");
-    } else {
+    const success = await endRide(rideId);
+    if (success) {
       toast.success("سفر با موفقیت به پایان رسید");
       router.push(isDriver ? "/driver/profile" : "/passenger/profile");
+    } else {
+      toast.error("خطا در تکمیل سفر");
+    }
+  };
+
+  const handleCancel = async () => {
+    try {
+      // Get ride details
+      const { data: ride, error: rideError } = await supabase
+        .from("rides")
+        .select("passenger_id, driver_id")
+        .eq("id", rideId)
+        .single();
+
+      if (rideError) throw rideError;
+
+      // Update ride status
+      const { error: updateRideError } = await supabase
+        .from("rides")
+        .update({ status: "canceled" })
+        .eq("id", rideId);
+
+      if (updateRideError) throw updateRideError;
+
+      // Reset driver's ride status
+      const { error: driverUpdateError } = await supabase
+        .from("users")
+        .update({ in_ride: false, ride_id: null })
+        .eq("id", ride.driver_id);
+
+      if (driverUpdateError) throw driverUpdateError;
+
+      // Reset passenger's ride status
+      const { error: passengerUpdateError } = await supabase
+        .from("users")
+        .update({ in_ride: false, ride_id: null })
+        .eq("id", ride.passenger_id);
+
+      if (passengerUpdateError) throw passengerUpdateError;
+
+      // Update ride request status
+      const { error: requestUpdateError } = await supabase
+        .from("ride_requests")
+        .update({ status: "canceled" })
+        .eq("ride_id", rideId);
+
+      if (requestUpdateError) throw requestUpdateError;
+
+      toast.success("سفر با موفقیت لغو شد");
+      router.push(isDriver ? "/driver/profile" : "/passenger/profile");
+    } catch (err) {
+      console.error("❌ Error canceling ride:", err);
+      toast.error("خطا در لغو سفر");
     }
   };
 
@@ -227,6 +276,7 @@ const TripMap = () => {
           <Button
             className="w-full bg-blue-600 text-white py-3 text-lg rounded-xl hover:bg-blue-700"
             onClick={handleComplete}
+            loading={endRideLoading}
           >
             اتمام سفر
           </Button>
@@ -239,18 +289,7 @@ const TripMap = () => {
             </p>
             <Button
               className="w-full bg-red-600 text-white py-3 text-lg rounded-xl hover:bg-red-700"
-              onClick={async () => {
-                const { error } = await supabase
-                  .from("rides")
-                  .update({ status: "canceled" })
-                  .eq("id", rideId);
-                if (error) {
-                  toast.error("خطا در لغو سفر");
-                } else {
-                  toast.success("سفر با موفقیت لغو شد");
-                  router.push("/passenger/profile");
-                }
-              }}
+              onClick={handleCancel}
             >
               لغو سفر
             </Button>
@@ -258,45 +297,39 @@ const TripMap = () => {
         )}
 
         {isPassenger && ride.status === "arrived" && (
-          <p className="text-center text-yellow-700 text-lg font-medium">
-            🚕 راننده به موقعیت شما رسیده است، لطفاً آماده باشید.
-          </p>
+          <div className="space-y-3">
+            <p className="text-center text-gray-700 text-lg font-medium">
+              🚗 راننده رسیده است
+            </p>
+            <Button
+              className="w-full bg-red-600 text-white py-3 text-lg rounded-xl hover:bg-red-700"
+              onClick={handleCancel}
+            >
+              لغو سفر
+            </Button>
+          </div>
         )}
 
         {isPassenger && ride.status === "started" && (
           <div className="space-y-3">
-            <p className="text-center text-blue-700 text-lg font-medium">
-              🚙 در حال حرکت به مقصد...
-            </p>
-            <p className="text-lg mb-2 text-center">
-              💰 مبلغ قابل پرداخت:{" "}
-              <span className="font-bold text-green-600">
-                {Math.ceil(ride.price)?.toLocaleString("fa")} تومان
-              </span>
-            </p>
-            <p className="text-center text-red-700 text-lg font-medium border border-red-700 rounded-xl p-2 bg-red-50">
-              پرداخت به صورت نقدی است
+            <p className="text-center text-gray-700 text-lg font-medium">
+              🚗 در حال سفر...
             </p>
           </div>
         )}
 
         {isPassenger && ride.status === "completed" && (
-          <div>
-            <p className="text-lg mb-2 text-center">
-              سفر شما به پایان رسیده است.
+          <div className="space-y-3">
+            <p className="text-center text-gray-700 text-lg font-medium">
+              ✅ سفر به پایان رسید
             </p>
-            <Link href="/passenger/profile">
-              <Button className="w-full bg-primary text-white py-3 text-lg rounded-xl hover:bg-teal-700">
-                بازگشت به پروفایل
-              </Button>
-            </Link>
+            <Button
+              className="w-full bg-primary text-white py-3 text-lg rounded-xl hover:bg-teal-700"
+              onClick={() => router.push("/passenger/profile")}
+            >
+              بازگشت به پروفایل
+            </Button>
           </div>
-        )}
-
-        {ride.status === "canceled" && (
-          <p className="text-center text-red-600 text-lg font-semibold">
-            این سفر لغو شده است.
-          </p>
         )}
       </div>
     </div>

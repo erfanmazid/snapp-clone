@@ -53,4 +53,6 @@ export interface UserDate {
   role: string;
   profile_image?: null;
   created_at: string;
+  in_ride: boolean;
+  ride_id: string | null;
 }
